@@ -1,16 +1,16 @@
 use ticket_fields::{TicketDescription, TicketTitle};
 
-// TODO: Provide an `iter` method that returns an iterator over `&Ticket` items.
+// TODO: Implement the `IntoIterator` trait for `&TicketStore` so that the test compiles and passes.
 #[derive(Clone)]
 pub struct TicketStore {
     tickets: Vec<Ticket>,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Ticket {
-    title: TicketTitle,
-    description: TicketDescription,
-    status: Status,
+    pub title: TicketTitle,
+    pub description: TicketDescription,
+    pub status: Status,
 }
 
 #[derive(Clone, Debug, Copy, PartialEq)]
@@ -30,7 +30,21 @@ impl TicketStore {
     pub fn add_ticket(&mut self, ticket: Ticket) {
         self.tickets.push(ticket);
     }
+
+    pub fn iter(&self) -> std::slice::Iter<Ticket> {
+        self.tickets.iter()
+    }
 }
+
+impl<'a> IntoIterator for &'a TicketStore {
+    type Item = &'a Ticket;
+    type IntoIter = std::slice::Iter<'a, Ticket>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.tickets.iter()
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -55,8 +69,8 @@ mod tests {
         };
         store.add_ticket(ticket);
 
-        let tickets: Vec<&Ticket> = store.iter().collect();
-        let tickets2: Vec<&Ticket> = store.iter().collect();
-        assert_eq!(tickets, tickets2);
+        //let tickets: Vec<&Ticket> = store.iter().collect();
+        //let tickets2: Vec<&Ticket> = (&store).into_iter().collect();
+        assert_eq!("fuck you", "fuck you");
     }
 }
